@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superpower PiP — Smart Picture-in-Picture</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='14' fill='%23FBBF24' stroke='%23111' stroke-width='7'/%3E%3Ctext x='50' y='68' font-family='Impact,Arial Black,sans-serif' font-size='52' text-anchor='middle' fill='%23111' font-weight='900'%3EPiP%3C/text%3E%3C/svg%3E" type="image/svg+xml">
+
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="Superpower PiP — Smart Picture-in-Picture">
+    <meta property="og:description" content="Free your videos from their traps! The PiP extension with real superpowers.">
+    <meta property="og:image" content="banner.png">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Superpower PiP — Smart Picture-in-Picture">
+    <meta name="twitter:description" content="Free your videos from their traps! The PiP extension with real superpowers.">
+    <meta name="twitter:image" content="banner.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'comic': ['Bangers', 'Impact', 'Arial Black', 'cursive'],
+                        'body': ['Inter', 'Helvetica', 'Arial', 'sans-serif'],
+                    },
+                    colors: {
+                        'paper': '#FDFBF7',
+                        'ink': '#111111',
+                        'hero-red': '#DC2626',
+                        'hero-red-dark': '#B91C1C',
+                        'royal-blue': '#1E3A5F',
+                        'royal-blue-light': '#2B5A8C',
+                        'gold': '#F59E0B',
+                        'gold-bright': '#FBBF24',
+                        'comic-yellow': '#FFD93D',
+                        'off-white': '#FEF9EC',
+                    },
+                    boxShadow: {
+                        'comic': '6px 6px 0px 0px rgba(0,0,0,1)',
+                        'comic-sm': '4px 4px 0px 0px rgba(0,0,0,1)',
+                        'comic-lg': '10px 10px 0px 0px rgba(0,0,0,1)',
+                        'comic-xl': '14px 14px 0px 0px rgba(0,0,0,1)',
+                        'comic-inner': 'inset 4px 4px 0px 0px rgba(0,0,0,0.15)',
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --paper: #FDFBF7;
+            --ink: #111;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Helvetica', 'Arial', sans-serif;
+            background-color: var(--paper);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ============ BEN-DAY DOTS PATTERN ============ */
+        .ben-day {
+            position: relative;
+            overflow: hidden;
+        }
+        .ben-day::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image: radial-gradient(circle, #000000 1.2px, transparent 1.2px);
+            background-size: 9px 9px;
+            opacity: 0.06;
+        }
+        .ben-day-heavy::after {
+            background-size: 7px 7px;
+            opacity: 0.12;
+            background-image: radial-gradient(circle, #000000 1.5px, transparent 1.5px);
+        }
+        .ben-day-colored::after {
+            background-image: radial-gradient(circle, #DC2626 1.5px, transparent 1.5px);
+            background-size: 8px 8px;
+            opacity: 0.18;
+        }
+
+        /* Assure que le contenu passe au-dessus du pseudo-élément */
+        .ben-day>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============ HALFTONE DOTS ON BADGES ============ */
+        .badge-halftone {
+            position: relative;
+        }
+        .badge-halftone::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            pointer-events: none;
+            z-index: 0;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0.8px, transparent 0.8px);
+            background-size: 5px 5px;
+            border-radius: inherit;
+        }
+
+        /* ============ FLOATING ANIMATION FOR PiP BUBBLE ============ */
+        @keyframes pipFloat {
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(-2deg);
+            }
+            25% {
+                transform: translate(-6px, -14px) rotate(-1deg);
+            }
+            50% {
+                transform: translate(4px, -22px) rotate(-3deg);
+            }
+            75% {
+                transform: translate(-3px, -10px) rotate(0deg);
+            }
+        }
+        @keyframes pipFloatReverse {
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(3deg);
+            }
+            30% {
+                transform: translate(8px, -12px) rotate(5deg);
+            }
+            60% {
+                transform: translate(-5px, -20px) rotate(2deg);
+            }
+            85% {
+                transform: translate(2px, -8px) rotate(4deg);
+            }
+        }
+        .animate-pip {
+            animation: pipFloat 4s ease-in-out infinite;
+        }
+        .animate-pip-reverse {
+            animation: pipFloatReverse 5s ease-in-out infinite;
+        }
+
+        /* ============ BRUTAL HOVER TRANSITIONS ============ */
+        .btn-brutal {
+            transition: all 0.08s ease-out;
+            cursor: pointer;
+        }
+        .btn-brutal:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1);
+        }
+        .btn-brutal:active {
+            transform: translate(5px, 5px);
+            box-shadow: 1px 1px 0px 0px rgba(0, 0, 0, 1);
+        }
+        .btn-brutal-reverse {
+            transition: all 0.08s ease-out;
+            cursor: pointer;
+        }
+        .btn-brutal-reverse:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 10px 10px 0px 0px rgba(0, 0, 0, 1);
+        }
+
+        /* ============ COMIC PANEL HOVER ============ */
+        .comic-panel {
+            transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
+        }
+        .comic-panel:hover {
+            transform: translate(-2px, -4px);
+            box-shadow: 12px 12px 0px 0px rgba(0, 0, 0, 1);
+        }
+
+        /* ============ STARBURST DECORATION ============ */
+        .starburst {
+            display: inline-block;
+            animation: starburstPulse 2s ease-in-out infinite;
+        }
+        @keyframes starburstPulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.25);
+            }
+        }
+
+        /* ============ SCANLINES ON TV SCREEN ============ */
+        .tv-scanlines {
+            position: relative;
+        }
+        .tv-scanlines::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 5;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 3px,
+                    rgba(0, 0, 0, 0.04) 3px,
+                    rgba(0, 0, 0, 0.04) 4px);
+            border-radius: inherit;
+        }
+
+        /* ============ CUSTOM SCROLLBAR ============ */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FDFBF7;
+            border-left: 2px solid #111;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E3A5F;
+            border: 2px solid #111;
+            border-radius: 0;
+        }
+
+        /* ============ RESPONSIVE ADJUSTMENTS ============ */
+        @media (max-width: 768px) {
+            .comic-panel:hover {
+                transform: none;
+                box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+            }
+            .btn-brutal:hover,
+            .btn-brutal-reverse:hover {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-paper text-ink font-body min-h-screen flex flex-col selection:bg-hero-red selection:text-white">
+
+    <!-- ==================== HEADER ==================== -->
+    <header class="w-full border-b-4 border-ink bg-comic-yellow relative ben-day">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex flex-wrap items-center justify-between gap-3 relative z-10">
+            <!-- Bloc titre -->
+            <div class="flex items-center gap-3 flex-wrap">
+                <div class="bg-comic-yellow border-4 border-ink px-4 sm:px-6 py-2 sm:py-3 shadow-comic inline-block transform -rotate-1">
+                    <h1 class="font-comic text-2xl sm:text-3xl md:text-4xl text-ink tracking-tight leading-none">
+                        ⚡&nbsp;SUPERPOWER&nbsp;PiP
+                    </h1>
+                </div>
+                <!-- Badge "OUT NOW" -->
+                <span class="inline-block bg-hero-red text-white font-comic text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2 border-[3px] border-ink shadow-comic-sm transform rotate-1 badge-halftone tracking-wider whitespace-nowrap">
+                    OUT NOW!
+                </span>
+            </div>
+            <!-- Bouton Privacy Policy -->
+            <a href="https://docs.google.com/document/d/1T9vg3ydocA-KahNvu2rQYIVkqVlRih0edA-kqhJpZL4/edit?usp=sharing"
+            target="_blank" rel="noopener noreferrer"
+            class="font-body text-xs sm:text-sm font-bold text-ink bg-off-white border-[3px] border-ink px-3 sm:px-4 py-1.5 sm:py-2 shadow-comic-sm btn-brutal hover:bg-white transition-colors whitespace-nowrap no-underline">
+            📜 Privacy Policy
+        </a>
+    </div>
+</header>
+
+<!-- ==================== HERO SECTION ==================== -->
+<section class="relative overflow-hidden py-10 sm:py-16 md:py-20 px-4">
+    <!-- Accents décoratifs : éclats / étoiles -->
+    <div class="absolute top-6 left-6 text-5xl sm:text-7xl starburst select-none pointer-events-none opacity-80" style="animation-delay: 0s;">💥</div>
+    <div class="absolute top-10 right-8 text-4xl sm:text-6xl starburst select-none pointer-events-none opacity-70" style="animation-delay: 0.7s;">⭐</div>
+    <div class="absolute bottom-12 left-10 text-3xl sm:text-5xl starburst select-none pointer-events-none opacity-60" style="animation-delay: 1.4s;">💫</div>
+    <div class="absolute bottom-8 right-12 text-5xl sm:text-7xl starburst select-none pointer-events-none opacity-75" style="animation-delay: 0.35s;">⚡</div>
+
+    <div class="max-w-4xl mx-auto text-center relative z-10">
+        <!-- Onomatopée façon comics -->
+        <div class="inline-block transform -rotate-2 mb-4">
+            <span class="font-comic text-7xl sm:text-8xl md:text-9xl text-hero-red leading-none drop-shadow-[4px_4px_0px_rgba(0,0,0,1)]"
+            style="text-shadow: 5px 5px 0px #000, -2px -2px 0px #FBBF24, 2px -2px 0px #FBBF24;">
+            POW!
+        </span>
+    </div>
+
+    <!-- Titre principal -->
+    <h2 class="font-comic text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-ink leading-tight mb-4 px-2"
+    style="text-shadow: 3px 3px 0px rgba(0,0,0,0.15);">
+    FREE YOUR VIDEOS<br class="hidden sm:block"> FROM THEIR
+    <span class="text-hero-red relative inline-block">
+        TRAPS
+        <!-- Soulignement brutal -->
+        <span class="absolute -bottom-1 left-0 w-full h-2 sm:h-3 bg-comic-yellow border-2 border-ink -z-10"></span>
+    </span> !
+</h2>
+
+<!-- Sous-titre -->
+<p class="font-body text-base sm:text-lg md:text-xl text-ink/80 max-w-2xl mx-auto mb-10 leading-relaxed font-semibold px-2">
+    The extension that <strong class="text-hero-red">intelligently detects</strong> the best video stream,
+    breaks blocking scripts, and gives you <strong class="text-royal-blue">total control</strong> in one click.
+</p>
+
+<!-- ========== BOUTON INSTALLATION (remplace le formulaire) ========== -->
+<div class="max-w-lg mx-auto bg-off-white border-4 border-ink shadow-comic-lg p-5 sm:p-8 relative ben-day transform rotate-[0.5deg]"
+id="install-card">
+<!-- Petit badge -->
+<div class="absolute -top-4 -right-4 bg-hero-red text-white font-comic text-xs sm:text-sm px-3 py-1.5 border-[3px] border-ink shadow-comic-sm transform rotate-6 z-20 whitespace-nowrap">
+    GET IT NOW
+</div>
+<h3 class="font-comic text-xl sm:text-2xl text-ink mb-2 relative z-10">
+    🦸 Superpower PiP is Available!
+</h3>
+<p class="font-body text-sm text-ink/70 mb-5 relative z-10">
+    Install the ultimate Picture-in-Picture extension from the Chrome Web Store. <strong>Zero trackers, pure power.</strong>
+</p>
+<a href="https://chromewebstore.google.com/detail/aura-volume-booster/ifkkeblggcbdccokicenjeakbmjpmidc"
+target="_blank" rel="noopener noreferrer"
+class="inline-block w-full text-center font-comic text-xl sm:text-2xl px-6 py-4 bg-hero-red text-white border-[3px] border-ink shadow-comic btn-brutal hover:bg-hero-red-dark active:bg-hero-red-dark tracking-wide no-underline">
+🚀 INSTALL SUPERHERO PIP
+</a>
+</div>
+</div>
+</section>
+
+<!-- ==================== MOCKUP : LA CASE DE BD ==================== -->
+<section class="py-8 sm:py-12 px-4">
+    <div class="max-w-3xl mx-auto">
+        <!-- Cadre de la "case" -->
+        <div class="border-[5px] border-ink shadow-comic-xl bg-[#E8E0D3] p-4 sm:p-8 relative transform rotate-[0.3deg] comic-panel">
+
+            <!-- Indice case de BD : coin plié -->
+            <div class="absolute top-0 right-0 w-0 h-0 border-l-[40px] border-l-transparent border-t-[40px] border-t-ink z-20"></div>
+            <div class="absolute top-[5px] right-[5px] w-0 h-0 border-l-[33px] border-l-transparent border-t-[33px] border-t-paper z-10"></div>
+
+            <!-- Étiquette "PANEL #1" -->
+            <span class="absolute top-3 left-4 font-comic text-xs text-ink/50 tracking-widest z-10">PANEL #1</span>
+
+            <!-- La TV rétro -->
+            <div class="relative mx-auto w-full max-w-md aspect-[4/3] bg-[#2A2A2A] border-[6px] border-ink rounded-xl overflow-hidden tv-scanlines shadow-comic-lg"
+            style="background: radial-gradient(ellipse at center, #3a3a3a 0%, #1a1a1a 100%);">
+            <!-- Écran -->
+            <div class="absolute inset-3 bg-[#1a1a2e] border-[3px] border-ink/60 rounded-sm overflow-hidden">
+                <!-- Fausse vidéo en cours -->
+                <div class="absolute inset-0 bg-gradient-to-br from-royal-blue via-blue-900 to-black flex items-center justify-center">
+                    <!-- Barre de progression -->
+                    <div class="absolute bottom-3 left-3 right-3 h-2 bg-ink/50 border border-ink/30 rounded-sm overflow-hidden">
+                        <div class="h-full bg-hero-red" style="width: 67%;"></div>
+                    </div>
+                    <!-- Bouton play -->
+                    <div class="w-14 h-14 bg-white/90 border-[3px] border-ink rounded-full flex items-center justify-center shadow-comic-sm">
+                        <div class="w-0 h-0 border-t-[14px] border-t-transparent border-b-[14px] border-b-transparent border-l-[22px] border-l-ink ml-1.5"></div>
+                    </div>
+                    <!-- Timecode -->
+                    <span class="absolute bottom-5 right-5 font-body text-[10px] text-white/70 font-mono">12:47 / 19:02</span>
+                </div>
+            </div>
+            <!-- Pied du téléviseur -->
+            <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 w-20 h-5 bg-[#3a3a3a] border-[3px] border-ink rounded-b-md shadow-comic-sm z-10"></div>
+            <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 w-10 h-3 bg-[#2a2a2a] border-2 border-ink rounded-b-sm z-5"></div>
+            <!-- Antennes -->
+            <div class="absolute -top-12 left-6 w-1 h-14 bg-ink rotate-[-25deg] origin-bottom z-20"></div>
+            <div class="absolute -top-14 right-8 w-1 h-16 bg-ink rotate-[20deg] origin-bottom z-20"></div>
+            <div class="absolute -top-[52px] left-[18px] w-3 h-3 bg-hero-red border-2 border-ink rounded-full z-20"></div>
+            <div class="absolute -top-[62px] right-[26px] w-3 h-3 bg-hero-red border-2 border-ink rounded-full z-20"></div>
+        </div>
+
+        <!-- ========== BULLE PiP QUI S'ÉCHAPPE ========== -->
+        <div class="absolute -top-8 -right-4 sm:-right-10 z-30 animate-pip">
+            <!-- Bulle de BD -->
+            <div class="relative bg-comic-yellow border-4 border-ink shadow-comic-lg rounded-2xl p-3 sm:p-4 min-w-[120px] sm:min-w-[150px]"
+            style="border-radius: 50% 50% 50% 10% / 60% 60% 40% 40%;">
+            <!-- Mini écran dans la bulle -->
+            <div class="bg-[#1a1a2e] border-2 border-ink rounded-md overflow-hidden aspect-video mb-2 flex items-center justify-center relative">
+                <div class="w-6 h-6 bg-hero-red rounded-full border-2 border-ink flex items-center justify-center">
+                    <div class="w-0 h-0 border-t-[4px] border-t-transparent border-b-[4px] border-b-transparent border-l-[7px] border-l-white ml-0.5"></div>
+                </div>
+                <!-- Petit badge PiP -->
+                <span class="absolute top-0.5 right-1 font-comic text-[8px] text-gold-bright bg-ink/70 px-1 rounded-sm">PiP</span>
+            </div>
+            <!-- Onomatopée -->
+            <p class="font-comic text-sm sm:text-lg text-hero-red text-center leading-none">PiP!</p>
+            <!-- Pointe de bulle -->
+            <div class="absolute -bottom-3 left-8 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[16px] border-t-ink"></div>
+            <div class="absolute -bottom-[7px] left-[10px] w-0 h-0 border-l-[9px] border-l-transparent border-r-[9px] border-r-transparent border-t-[12px] border-t-comic-yellow"></div>
+        </div>
+    </div>
+
+    <!-- Deuxième petite bulle -->
+    <div class="absolute -bottom-6 left-[-15px] sm:left-[-20px] z-30 animate-pip-reverse">
+        <div class="bg-white border-[3px] border-ink shadow-comic rounded-full px-3 py-1.5 flex items-center gap-2"
+        style="border-radius: 30% 70% 60% 40% / 50% 50% 50% 50%;">
+        <span class="text-lg">🎬</span>
+        <span class="font-comic text-xs text-ink">Detected!</span>
+    </div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ==================== 4 SUPER-POUVOIRS (English) ==================== -->
+<section class="py-10 sm:py-16 px-4 bg-off-white/50 relative border-t-4 border-ink ben-day-heavy">
+    <!-- Titre section -->
+    <div class="max-w-6xl mx-auto text-center mb-10 sm:mb-14 relative z-10">
+        <span class="inline-block font-comic text-sm tracking-widest text-hero-red bg-white border-2 border-ink px-3 py-1 mb-3 transform -rotate-1 shadow-comic-sm">
+            SECRET ORIGIN
+        </span>
+        <h2 class="font-comic text-4xl sm:text-5xl md:text-6xl text-ink leading-tight">
+            YOUR <span class="text-hero-red">4 PiP SUPERPOWERS</span>
+        </h2>
+    </div>
+
+    <!-- Grille 2x2 -->
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 relative z-10">
+        <!-- Carte 1 : Alpha Radar -->
+        <article class="bg-white border-4 border-ink shadow-comic comic-panel p-5 sm:p-7 flex flex-col sm:flex-row gap-4 sm:gap-5 items-start transform rotate-[-0.2deg] ben-day"
+        style="border-radius: 4px 24px 4px 24px;">
+        <div class="text-5xl sm:text-6xl flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-comic-yellow border-[3px] border-ink flex items-center justify-center shadow-comic-sm"
+        style="border-radius: 50%;">
+        🧠
+    </div>
+    <div class="flex-1">
+        <h3 class="font-comic text-xl sm:text-2xl text-ink mb-2 leading-tight">THE ALPHA RADAR</h3>
+        <p class="text-xs sm:text-sm font-bold text-hero-red uppercase tracking-wider mb-2">Detection & Scoring</p>
+        <p class="font-body text-sm sm:text-base text-ink/75 leading-relaxed">
+            <strong>Instant analysis</strong> of all videos on the page — size, visibility, audio volume — to launch <strong>the right video</strong> without any guesswork.
+        </p>
+    </div>
+</article>
+
+<!-- Carte 2 : Security Shield -->
+<article class="bg-white border-4 border-ink shadow-comic comic-panel p-5 sm:p-7 flex flex-col sm:flex-row gap-4 sm:gap-5 items-start transform rotate-[0.3deg] ben-day"
+style="border-radius: 24px 4px 24px 4px;">
+<div class="text-5xl sm:text-6xl flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-royal-blue border-[3px] border-ink flex items-center justify-center shadow-comic-sm"
+style="border-radius: 50%;">
+🛡️
+</div>
+<div class="flex-1">
+    <h3 class="font-comic text-xl sm:text-2xl text-ink mb-2 leading-tight">THE SECURITY SHIELD</h3>
+    <p class="text-xs sm:text-sm font-bold text-royal-blue uppercase tracking-wider mb-2">100% Local & Private</p>
+    <p class="font-body text-sm sm:text-base text-ink/75 leading-relaxed">
+        <strong>Zero data collection</strong>, <strong>zero tracking</strong>. Everything runs locally in your browser. Your secrets stay safe, like in a vault!
+    </p>
+</div>
+</article>
+
+<!-- Carte 3 : Lightning Return -->
+<article class="bg-white border-4 border-ink shadow-comic comic-panel p-5 sm:p-7 flex flex-col sm:flex-row gap-4 sm:gap-5 items-start transform rotate-[-0.4deg] ben-day"
+style="border-radius: 4px 24px 4px 24px;">
+<div class="text-5xl sm:text-6xl flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-gold border-[3px] border-ink flex items-center justify-center shadow-comic-sm"
+style="border-radius: 50%;">
+⚡
+</div>
+<div class="flex-1">
+    <h3 class="font-comic text-xl sm:text-2xl text-ink mb-2 leading-tight">THE LIGHTNING STRIKE</h3>
+    <p class="text-xs sm:text-sm font-bold text-gold/90 uppercase tracking-wider mb-2">Blazing Shortcuts</p>
+    <p class="font-body text-sm sm:text-base text-ink/75 leading-relaxed">
+        Just press <kbd class="bg-ink text-white px-2 py-0.5 rounded text-xs font-mono border border-ink">Alt+Shift+I</kbd> or use a themed right-click to toggle <strong>Picture-in-Picture</strong> instantly. As fast as lightning!
+    </p>
+</div>
+</article>
+
+<!-- Carte 4 : The Visionary -->
+<article class="bg-white border-4 border-ink shadow-comic comic-panel p-5 sm:p-7 flex flex-col sm:flex-row gap-4 sm:gap-5 items-start transform rotate-[0.2deg] ben-day"
+style="border-radius: 24px 4px 24px 4px;">
+<div class="text-5xl sm:text-6xl flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-hero-red border-[3px] border-ink flex items-center justify-center shadow-comic-sm"
+style="border-radius: 50%;">
+🔍
+</div>
+<div class="flex-1">
+    <h3 class="font-comic text-xl sm:text-2xl text-ink mb-2 leading-tight">THE VISIONARY</h3>
+    <p class="text-xs sm:text-sm font-bold text-hero-red/80 uppercase tracking-wider mb-2">Diagnostic Mode</p>
+    <p class="font-body text-sm sm:text-base text-ink/75 leading-relaxed">
+        A transparent panel to <strong>instantly unmask</strong> why a stubborn website is trying to block the PiP mode. You see the invisible!
+    </p>
+</div>
+</article>
+</div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="bg-ink text-paper border-t-4 border-hero-red mt-auto py-8 sm:py-10 px-4 ben-day-heavy">
+    <div class="max-w-5xl mx-auto text-center relative z-10">
+        <!-- Badge footer -->
+        <div class="inline-block bg-hero-red border-[3px] border-paper shadow-comic-sm px-4 py-1.5 mb-5 transform -rotate-1">
+            <span class="font-comic text-sm tracking-widest text-white">END OF ISSUE</span>
+        </div>
+        <p class="font-body text-sm sm:text-base text-paper/80 max-w-2xl mx-auto leading-relaxed mb-4">
+            Proudly powered <span class="text-hero-red font-bold">without any trackers</span> in 2026.<br>
+            <span class="text-xs text-paper/50">(Yes, we're old school. The good kind.)</span>
+        </p>
+        <a href="https://docs.google.com/document/d/1T9vg3ydocA-KahNvu2rQYIVkqVlRih0edA-kqhJpZL4/edit?usp=sharing"
+        target="_blank" rel="noopener noreferrer"
+        class="inline-block font-body text-sm font-bold text-comic-yellow border-2 border-comic-yellow px-4 py-2 hover:bg-comic-yellow hover:text-ink transition-all no-underline shadow-comic-sm btn-brutal-reverse mt-2">
+        📜 Read the Privacy Policy
+    </a>
+    <p class="font-body text-xs text-paper/40 mt-6">
+        © 2026 Superpower PiP — All rights reserved. Drawn with ❤️ in pure comic book tradition.
+    </p>
+</div>
+</footer>
+
+<!-- ==================== VANILLA JS (animations uniquement) ==================== -->
+<script>
+    (function() {
+        // Animation d'entrée des cartes au scroll
+        const panels = document.querySelectorAll('.comic-panel');
+        if ('IntersectionObserver' in window && panels.length > 0) {
+            const observerOptions = { threshold: 0.2, rootMargin: '0px 0px -40px 0px' };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = entry.target.style.transform ||
+                            'translateY(0)';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            panels.forEach(panel => {
+                const currentTransform = panel.style.transform || '';
+                panel.style.opacity = '0';
+                panel.style.transform = currentTransform + ' translateY(20px)';
+                panel.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out, box-shadow 0.12s ease-out';
+                observer.observe(panel);
+                setTimeout(() => {
+                    if (panel.getBoundingClientRect().top < window.innerHeight) {
+                        panel.style.opacity = '1';
+                        panel.style.transform = currentTransform || 'translateY(0)';
+                    }
+                }, 300);
+            });
+        } else {
+            panels.forEach(p => { p.style.opacity = '1'; });
+        }
+
+        console.log('%c🦸 SUPERHERO PIP %cLanding Page Ready',
+            'font-size:2em;font-weight:bold;color:#DC2626;font-family:Bangers,Impact,cursive;',
+            'font-size:1em;color:#111;');
+        console.log('%cNo trackers. No data collection. Pure comic book style.',
+            'color:#555;font-style:italic;');
+    })();
+</script>
+</body>
+</html>
