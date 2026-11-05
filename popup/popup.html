@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <title>Superpower PiP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=MedievalSharp&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header class="header">
+        <img src="../icons/icon48.png" alt="" class="logo" />
+        <div class="header-content">
+          <h1>Superpower PiP</h1>
+          <p class="subtitle">Smart Picture-in-Picture</p>
+        </div>
+        <button id="themeBtn" class="theme-btn" title="Change theme">
+          <span class="theme-icon">🌗</span>
+        </button>
+      </header>
+
+      <!-- OperaGX Warning Banner -->
+      <div id="operaWarning" class="warning-banner" hidden>
+        <span class="warning-icon">⚠️</span>
+        <span class="warning-text">Opera GX's built-in PiP may conflict with Advanced Controls. We recommend using basic mode for best results.</span>
+        <button class="opera-warning-close" id="operaWarningClose" title="Hide this warning">×</button>
+      </div>
+
+  <main>
+    <button id="autoBtn" class="primary-btn">
+      <span class="btn-icon">⧉</span>
+      <span id="autoBtnLabel">Start Picture-in-Picture</span>
+    </button>
+
+    <button id="hoverModeBtn" class="hover-mode-btn">
+      <span class="btn-icon">🖱️</span>
+      <span>Select video on page</span>
+    </button>
+    <div class="advanced-toggle-container">
+      <label class="toggle-switch">
+        <input type="checkbox" id="advancedToggle" />
+        <span class="slider"></span>
+      </label>
+      <span class="advanced-label">Advanced Controls</span>
+    </div>
+
+    <!-- Settings Section (new features) -->
+    <div id="settingsSection" class="settings-section">
+      <div class="settings-item">
+        <div class="setting-row">
+          <label class="setting-switch">
+            <input type="checkbox" id="autoLeaveToggle" />
+            <span class="setting-slider"></span>
+          </label>
+          <span class="setting-label">Auto PiP on page leave</span>
+        </div>
+        <span class="setting-desc">Automatically start PiP when you navigate away from a page with a playing video</span>
+      </div>
+
+      <div class="settings-item">
+        <div class="setting-row">
+          <label class="setting-switch">
+            <input type="checkbox" id="multiPipToggle" />
+            <span class="setting-slider"></span>
+          </label>
+          <span class="setting-label">Multiple PiP mode</span>
+        </div>
+        <span class="setting-desc">Launch PiP on all playing videos at once; each window closes independently</span>
+      </div>
+
+      <div class="settings-item">
+        <div class="setting-row">
+          <label class="setting-switch">
+            <input type="checkbox" id="rememberSizeToggle" />
+            <span class="setting-slider"></span>
+          </label>
+          <span class="setting-label">Remember PiP size & position</span>
+        </div>
+        <span class="setting-desc">Save and restore your preferred PiP window dimensions and location</span>
+      </div>
+    </div>
+
+    <!-- Volume Control -->
+    <div id="volumeSection" class="volume-section" hidden>
+      <div class="volume-row">
+        <span class="volume-icon" id="volumeIcon">🔊</span>
+        <input type="range" id="volumeSlider" min="0" max="100" value="100" />
+        <span class="volume-value" id="volumeValue">100%</span>
+      </div>
+    </div>
+
+    <!-- Exit All PiP Button -->
+    <button id="exitAllBtn" class="secondary-btn" hidden>
+      <span class="btn-icon">✕</span>
+      <span>Exit all PiP windows</span>
+    </button>
+
+    <div id="statusBox" class="status-box" hidden></div>
+
+    <section id="listSection" hidden>
+      <div class="list-header">
+        <span>Detected videos</span>
+        <button id="refreshBtn" class="link-btn" title="Refresh">↻ Refresh</button>
+      </div>
+      <ul id="videoList" class="video-list"></ul>
+    </section>
+
+    <section id="emptySection" hidden>
+      <p class="empty-msg">No video detected yet.</p>
+      <button id="refreshBtnEmpty" class="secondary-btn">↻ Search again</button>
+    </section>
+
+    <details id="diagDetails" class="diagnostics">
+          <summary>Diagnostics</summary>
+          <div id="diagContent" class="diag-content">Loading…</div>
+        </details>
+
+        <!-- Subtle Aura Volume Booster promo -->
+        <div class="promo" id="promo">
+          <a href="https://chromewebstore.google.com/detail/aura-volume-booster/ifkkeblggcbdccokicenjeakbmjpmidc" target="_blank" class="promo-link">
+            <span class="promo-icon">🔊</span>
+            <span class="promo-text">Boost volume up to 600% with Aura Volume Booster</span>
+          </a>
+          <button class="promo-close" id="promoClose" title="Hide this promotion">×</button>
+        </div>
+      </main>
+
+      <footer>
+        <span>Shortcut: <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd></span>
+      </footer>
+
+  <script src="../shared/tab-actions.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

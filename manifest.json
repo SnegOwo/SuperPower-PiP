@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "Superpower PiP - Picture-in-Picture",
+  "version": "1.4.0",
+  "description": "Detects the right video on any page and launches Picture-in-Picture in one click with diagnostics in case of failure.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "PiP Pro — Start Picture-in-Picture"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["activeTab", "scripting", "contextMenus", "storage", "tabs"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com;"
+  },
+  "commands": {
+    "toggle-pip": {
+      "suggested_key": {
+        "default": "Alt+Shift+I"
+      },
+      "description": "Launch / exit Picture-in-Picture on the detected video"
+    },
+    "_execute_action": {
+      "description": "Open the PiP Pro panel"
+    }
+  }
+}
