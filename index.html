@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Superpower PiP — Smart Picture-in-Picture for Chrome</title>
-    <meta name="description" content="Open-source Chrome extension that detects the right video on any page, breaks PiP blockers, and gives you full Picture-in-Picture control in one click.">
+    <meta name="description" content="Open-source Chrome extension that finds the right video on any page, gets past PiP blockers, and controls Picture-in-Picture in one click.">
     <meta name="theme-color" content="#FBBF24">
     <link rel="canonical" href="https://super-power-pi-p.vercel.app/">
 
@@ -13,7 +13,7 @@
 
     <!-- Open Graph / Social -->
     <meta property="og:title" content="Superpower PiP — Smart Picture-in-Picture">
-    <meta property="og:description" content="Open-source Chrome extension that detects the right video, breaks PiP blockers, and gives you full control in one click.">
+    <meta property="og:description" content="Open-source Chrome extension that finds the right video, gets past PiP blockers, and controls Picture-in-Picture in one click.">
     <meta property="og:image" content="https://super-power-pi-p.vercel.app/banner.png">
     <meta property="og:url" content="https://super-power-pi-p.vercel.app/">
     <meta property="og:type" content="website">
@@ -22,7 +22,7 @@
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Superpower PiP — Smart Picture-in-Picture">
-    <meta name="twitter:description" content="Open-source Chrome extension that detects the right video, breaks PiP blockers, and gives you full control in one click.">
+    <meta name="twitter:description" content="Open-source Chrome extension that finds the right video, gets past PiP blockers, and controls Picture-in-Picture in one click.">
     <meta name="twitter:image" content="https://super-power-pi-p.vercel.app/banner.png">
 
     <!-- Google Fonts -->
@@ -91,7 +91,6 @@
         /* ============ BEN-DAY DOTS PATTERN ============ */
         .ben-day {
             position: relative;
-            overflow: hidden;
         }
         .ben-day::after {
             content: '';
@@ -102,6 +101,8 @@
             background-image: radial-gradient(circle, #000000 1.2px, transparent 1.2px);
             background-size: 9px 9px;
             opacity: 0.06;
+            /* match the element's rounded corners so dots never spill past them */
+            border-radius: inherit;
         }
         .ben-day-heavy::after {
             background-size: 7px 7px;
@@ -369,8 +370,8 @@
 
                 <!-- Subtitle -->
                 <p class="font-body text-base sm:text-lg md:text-xl text-ink/80 max-w-2xl mx-auto mb-6 leading-relaxed font-semibold px-2">
-                    The open-source extension that <strong class="text-hero-red">intelligently detects</strong> the best video stream,
-                    breaks blocking scripts, and gives you <strong class="text-royal-blue">total control</strong> in one click.
+                    Open-source Chrome extension that finds the right video,
+                    gets past blocking scripts, and controls Picture-in-Picture.
                 </p>
 
                 <!-- Trust badges -->
@@ -385,19 +386,19 @@
                 <div class="max-w-lg mx-auto bg-off-white border-4 border-ink shadow-comic-lg p-5 sm:p-8 relative ben-day transform rotate-[0.5deg]"
                      id="install-card">
                     <!-- Small badge -->
-                    <div class="absolute -top-4 -right-4 bg-hero-red text-white font-comic text-xs sm:text-sm px-3 py-1.5 border-[3px] border-ink shadow-comic-sm transform rotate-6 z-20 whitespace-nowrap">
+                    <div class="absolute -top-4 -right-2 sm:-right-4 bg-hero-red text-white font-comic text-xs sm:text-sm px-3 py-1.5 border-[3px] border-ink shadow-comic-sm transform rotate-6 z-20 whitespace-nowrap">
                         GET IT NOW
                     </div>
                     <h2 class="font-comic text-xl sm:text-2xl text-ink mb-2 relative z-10">
-                        🦸 Superpower PiP is Available!
+                        🦸 Install Superpower PiP
                     </h2>
                     <p class="font-body text-sm text-ink/70 mb-5 relative z-10">
-                        Install the ultimate Picture-in-Picture extension from the Chrome Web Store. <strong>Zero trackers, pure power.</strong>
+                        Available on the Chrome Web Store. No trackers.
                     </p>
                     <a href="https://chromewebstore.google.com/detail/superpower-pip-smart-pict/bpnokiblogdcbcncibedkfhggbfndelo"
                        target="_blank" rel="noopener noreferrer"
                        class="inline-block w-full text-center font-comic text-xl sm:text-2xl px-6 py-4 bg-hero-red text-white border-[3px] border-ink shadow-comic btn-brutal hover:bg-hero-red-dark active:bg-hero-red-dark tracking-wide no-underline">
-                        🚀 INSTALL SUPERPOWER PiP
+                        🚀 INSTALL
                     </a>
                     <a href="https://github.com/SnegOwo/SuperPower-PiP" target="_blank" rel="noopener noreferrer"
                        class="inline-block w-full text-center font-body text-sm font-bold text-ink/80 hover:text-hero-red mt-3 no-underline">
@@ -408,8 +409,8 @@
         </section>
 
         <!-- ==================== MOCKUP: THE COMIC PANEL ==================== -->
-        <section class="py-8 sm:py-12 px-4">
-            <div class="max-w-3xl mx-auto">
+        <section class="py-8 sm:py-12 px-4 sm:px-8">
+            <div class="max-w-3xl mx-auto relative">
                 <!-- Comic panel frame -->
                 <div class="border-[5px] border-ink shadow-comic-xl bg-[#E8E0D3] p-4 sm:p-8 relative transform rotate-[0.3deg] comic-panel">
 
@@ -421,7 +422,7 @@
                     <span class="absolute top-3 left-4 font-comic text-xs text-ink/50 tracking-widest z-10">PANEL #1</span>
 
                     <!-- Retro TV -->
-                    <div class="relative mx-auto w-full max-w-md aspect-[4/3] bg-[#2A2A2A] border-[6px] border-ink rounded-xl overflow-hidden tv-scanlines shadow-comic-lg"
+                    <div class="relative mx-auto w-full max-w-md aspect-[4/3] bg-[#2A2A2A] border-[6px] border-ink rounded-xl tv-scanlines shadow-comic-lg"
                          style="background: radial-gradient(ellipse at center, #3a3a3a 0%, #1a1a1a 100%);">
                         <!-- Screen -->
                         <div class="absolute inset-3 bg-[#1a1a2e] border-[3px] border-ink/60 rounded-sm overflow-hidden">
@@ -441,7 +442,7 @@
                         </div>
                         <!-- TV stand -->
                         <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 w-20 h-5 bg-[#3a3a3a] border-[3px] border-ink rounded-b-md shadow-comic-sm z-10"></div>
-                        <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 w-10 h-3 bg-[#2a2a2a] border-2 border-ink rounded-b-sm z-5"></div>
+                        <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 w-10 h-3 bg-[#2a2a2a] border-2 border-ink rounded-b-sm z-10"></div>
                         <!-- Antennas -->
                         <div class="absolute -top-12 left-6 w-1 h-14 bg-ink rotate-[-25deg] origin-bottom z-20"></div>
                         <div class="absolute -top-14 right-8 w-1 h-16 bg-ink rotate-[20deg] origin-bottom z-20"></div>
@@ -450,7 +451,7 @@
                     </div>
 
                     <!-- ========== ESCAPING PiP BUBBLE ========== -->
-                    <div class="absolute -top-8 -right-4 sm:-right-10 z-30 animate-pip">
+                    <div class="absolute -top-8 right-0 sm:-right-4 lg:-right-10 z-30 animate-pip">
                         <!-- Speech bubble -->
                         <div class="relative bg-comic-yellow border-4 border-ink shadow-comic-lg rounded-2xl p-3 sm:p-4 min-w-[120px] sm:min-w-[150px]"
                              style="border-radius: 50% 50% 50% 10% / 60% 60% 40% 40%;">
@@ -472,7 +473,7 @@
                 </div>
 
                 <!-- Second small bubble -->
-                <div class="absolute -bottom-6 left-[-15px] sm:left-[-20px] z-30 animate-pip-reverse">
+                <div class="absolute -bottom-6 left-2 sm:-left-5 z-30 animate-pip-reverse">
                     <div class="bg-white border-[3px] border-ink shadow-comic rounded-full px-3 py-1.5 flex items-center gap-2"
                          style="border-radius: 30% 70% 60% 40% / 50% 50% 50% 50%;">
                         <span class="text-lg">🎬</span>
@@ -482,19 +483,16 @@
             </div>
         </section>
 
-        <!-- ==================== 4 SUPERPOWERS ==================== -->
+        <!-- ==================== 4 POWERS ==================== -->
         <section id="powers" class="py-10 sm:py-16 px-4 bg-off-white/50 relative border-t-4 border-ink ben-day-heavy">
             <!-- Section title -->
             <div class="max-w-6xl mx-auto text-center mb-10 sm:mb-14 relative z-10">
                 <span class="inline-block font-comic text-sm tracking-widest text-hero-red bg-white border-2 border-ink px-3 py-1 mb-3 transform -rotate-1 shadow-comic-sm">
-                    SECRET ORIGIN
+                    FEATURES
                 </span>
                 <h2 class="font-comic text-4xl sm:text-5xl md:text-6xl text-ink leading-tight">
-                    YOUR <span class="text-hero-red">4 PiP SUPERPOWERS</span>
+                    FOUR POWERS
                 </h2>
-                <p class="font-body text-base text-ink/70 max-w-2xl mx-auto mt-3 font-semibold">
-                    Born from one rule: the video should always follow you. Here's how the powers work.
-                </p>
             </div>
 
             <!-- 2x2 grid -->
@@ -508,9 +506,9 @@
                     </div>
                     <div class="flex-1">
                         <h3 class="font-comic text-xl sm:text-2xl text-ink mb-2 leading-tight">THE ALPHA RADAR</h3>
-                        <p class="text-xs sm:text-sm font-bold text-hero-red uppercase tracking-wider mb-2">Detection &amp; Scoring</p>
+                        <p class="text-xs sm:text-sm font-bold text-hero-red uppercase tracking-wider mb-2">Detection</p>
                         <p class="font-body text-sm sm:text-base text-ink/75 leading-relaxed">
-                            <strong>Instant analysis</strong> of all videos on the page — size, visibility, audio volume — to launch <strong>the right video</strong> without any guesswork.
+                            Scans every video on the page — size, visibility, volume — and picks the right one.
                         </p>
                     </div>
                 </article>
@@ -524,9 +522,9 @@
                     </div>
                     <div class="flex-1">
                         <h3 class="font-comic text-xl sm:text-2xl text-ink mb-2 leading-tight">THE SECURITY SHIELD</h3>
-                        <p class="text-xs sm:text-sm font-bold text-royal-blue uppercase tracking-wider mb-2">100% Local &amp; Private</p>
+                        <p class="text-xs sm:text-sm font-bold text-royal-blue uppercase tracking-wider mb-2">Local &amp; Private</p>
                         <p class="font-body text-sm sm:text-base text-ink/75 leading-relaxed">
-                            <strong>Zero data collection</strong>, <strong>zero tracking</strong>. Everything runs locally in your browser. Your secrets stay safe, like in a vault!
+                            Everything runs locally. No data collection, no tracking.
                         </p>
                     </div>
                 </article>
@@ -540,9 +538,9 @@
                     </div>
                     <div class="flex-1">
                         <h3 class="font-comic text-xl sm:text-2xl text-ink mb-2 leading-tight">THE LIGHTNING STRIKE</h3>
-                        <p class="text-xs sm:text-sm font-bold text-gold/90 uppercase tracking-wider mb-2">Blazing Shortcuts</p>
+                        <p class="text-xs sm:text-sm font-bold text-gold/90 uppercase tracking-wider mb-2">Shortcuts</p>
                         <p class="font-body text-sm sm:text-base text-ink/75 leading-relaxed">
-                            Just press <kbd class="bg-ink text-white px-2 py-0.5 rounded text-xs font-mono border border-ink">Alt+Shift+I</kbd> or use a themed right-click to toggle <strong>Picture-in-Picture</strong> instantly. As fast as lightning!
+                            Press <kbd class="bg-ink text-white px-2 py-0.5 rounded text-xs font-mono border border-ink">Alt+Shift+I</kbd> or use the right-click menu.
                         </p>
                     </div>
                 </article>
@@ -556,28 +554,25 @@
                     </div>
                     <div class="flex-1">
                         <h3 class="font-comic text-xl sm:text-2xl text-ink mb-2 leading-tight">THE VISIONARY</h3>
-                        <p class="text-xs sm:text-sm font-bold text-hero-red/80 uppercase tracking-wider mb-2">Diagnostic Mode</p>
+                        <p class="text-xs sm:text-sm font-bold text-hero-red/80 uppercase tracking-wider mb-2">Diagnostics</p>
                         <p class="font-body text-sm sm:text-base text-ink/75 leading-relaxed">
-                            A transparent panel to <strong>instantly unmask</strong> why a stubborn website is trying to block the PiP mode. You see the invisible!
+                            Shows why a site is blocking Picture-in-Picture.
                         </p>
                     </div>
                 </article>
             </div>
         </section>
 
-        <!-- ==================== MORE SUPERPOWERS ==================== -->
+        <!-- ==================== EXTRAS ==================== -->
         <section class="py-10 sm:py-16 px-4 relative border-t-4 border-ink ben-day">
             <div class="max-w-6xl mx-auto relative z-10">
                 <div class="text-center mb-10 sm:mb-12">
                     <span class="inline-block font-comic text-sm tracking-widest text-royal-blue bg-white border-2 border-ink px-3 py-1 mb-3 transform rotate-1 shadow-comic-sm">
-                        POWER-UP ISSUE
+                        MORE
                     </span>
                     <h2 class="font-comic text-4xl sm:text-5xl md:text-6xl text-ink leading-tight">
-                        EVEN <span class="text-royal-blue">MORE POWERS</span>
+                        EXTRAS
                     </h2>
-                    <p class="font-body text-base text-ink/70 max-w-2xl mx-auto mt-3 font-semibold">
-                        The tricks that turn a good extension into a sidekick.
-                    </p>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
@@ -585,7 +580,7 @@
                         <span class="text-4xl">🚪</span>
                         <h3 class="font-comic text-lg sm:text-xl text-ink leading-tight">AUTO PiP ON LEAVE</h3>
                         <p class="font-body text-sm text-ink/80 leading-relaxed">
-                            Start PiP automatically when you switch tabs, then close it when you come back. Seamless.
+                            Starts PiP when you switch tabs. Closes it when you come back.
                         </p>
                     </article>
 
@@ -593,7 +588,7 @@
                         <span class="text-4xl">🪟</span>
                         <h3 class="font-comic text-lg sm:text-xl leading-tight">MULTI-PiP MODE</h3>
                         <p class="font-body text-sm text-paper/80 leading-relaxed">
-                            Every playing video gets its own independent floating window. Stack them like comic panels.
+                            Each playing video gets its own floating window.
                         </p>
                     </article>
 
@@ -601,7 +596,7 @@
                         <span class="text-4xl">📍</span>
                         <h3 class="font-comic text-lg sm:text-xl leading-tight">MEMORY OF POSITION</h3>
                         <p class="font-body text-sm text-white/85 leading-relaxed">
-                            Your advanced PiP window remembers its size and position, and reopens exactly where you left it.
+                            Remembers window size and position.
                         </p>
                     </article>
 
@@ -609,7 +604,7 @@
                         <span class="text-4xl">🎚️</span>
                         <h3 class="font-comic text-lg sm:text-xl text-ink leading-tight">VOLUME &amp; EXIT ALL</h3>
                         <p class="font-body text-sm text-ink/75 leading-relaxed">
-                            Adjust volume from the popup and close every PiP window at once. One button, total cleanup.
+                            Adjust volume from the popup. Close all PiP windows at once.
                         </p>
                     </article>
                 </div>
@@ -621,14 +616,11 @@
             <div class="max-w-5xl mx-auto relative z-10">
                 <div class="text-center mb-10 sm:mb-12">
                     <span class="inline-block font-comic text-sm tracking-widest text-hero-red bg-white border-2 border-ink px-3 py-1 mb-3 transform -rotate-1 shadow-comic-sm">
-                        SUIT UP
+                        INSTALL
                     </span>
                     <h2 class="font-comic text-4xl sm:text-5xl md:text-6xl text-ink leading-tight">
-                        INSTALL IN <span class="text-hero-red">ONE CLICK</span>
+                        GET IT
                     </h2>
-                    <p class="font-body text-base text-ink/70 max-w-2xl mx-auto mt-3 font-semibold">
-                        Free, open source, and auditable. Pick your origin story.
-                    </p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
@@ -639,7 +631,7 @@
                             <h3 class="font-comic text-2xl text-ink leading-none">CHROME WEB STORE</h3>
                         </div>
                         <p class="font-body text-sm text-ink/70 mb-5">
-                            The easy path: automatic updates and verified delivery.
+                            Automatic updates, verified by Google.
                         </p>
                         <ol class="font-body text-sm text-ink/80 space-y-2 mb-6 list-decimal list-inside">
                             <li>Open the listing</li>
@@ -660,7 +652,7 @@
                             <h3 class="font-comic text-2xl text-ink leading-none">FROM SOURCE</h3>
                         </div>
                         <p class="font-body text-sm text-ink/70 mb-4">
-                            No build system, no dependencies. Clone and load.
+                            No build step. No dependencies.
                         </p>
                         <pre class="bg-ink text-comic-yellow font-mono text-xs sm:text-sm p-3 border-[3px] border-ink overflow-x-auto mb-4"><code>git clone https://github.com/SnegOwo/SuperPower-PiP.git</code></pre>
                         <ol class="font-body text-sm text-ink/80 space-y-2 mb-6 list-decimal list-inside">
@@ -679,7 +671,7 @@
                 <!-- Open source strip -->
                 <div class="mt-8 bg-comic-yellow border-4 border-ink shadow-comic p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p class="font-body text-sm sm:text-base text-ink font-semibold text-center sm:text-left">
-                        <strong>Superpower PiP is 100% open source</strong> under the MIT license. Read the code, open an issue, or send a pull request.
+                        Open source under the MIT license. Read the code, open an issue, or send a pull request.
                     </p>
                     <a href="https://github.com/SnegOwo/SuperPower-PiP/blob/main/LICENSE"
                        target="_blank" rel="noopener noreferrer"
@@ -695,9 +687,9 @@
             <div class="max-w-3xl mx-auto relative z-10">
                 <div class="text-center mb-8 sm:mb-10">
                     <span class="inline-block font-comic text-sm tracking-widest text-royal-blue bg-white border-2 border-ink px-3 py-1 mb-3 transform rotate-1 shadow-comic-sm">
-                        SECRET FILES
+                        FAQ
                     </span>
-                    <h2 class="font-comic text-4xl sm:text-5xl text-ink leading-tight">QUESTIONS &amp; TRAPS</h2>
+                    <h2 class="font-comic text-4xl sm:text-5xl text-ink leading-tight">QUESTIONS</h2>
                 </div>
 
                 <div class="space-y-4">
@@ -707,9 +699,9 @@
                             <span class="faq-plus font-comic text-2xl text-hero-red leading-none">+</span>
                         </summary>
                         <p class="font-body text-sm text-ink/75 leading-relaxed mt-3">
-                            Two usual suspects: DRM-protected players (Netflix and friends) that deliberately block PiP, and sites sending
+                            Two usual suspects: DRM-protected players (Netflix and friends) that block PiP, and sites sending
                             <code class="bg-ink/5 border border-ink/20 px-1 rounded text-xs">Permissions-Policy: picture-in-picture=()</code>.
-                            The diagnostics panel tells you which one you're facing.
+                            The diagnostics panel tells you which one.
                         </p>
                     </details>
 
@@ -719,8 +711,8 @@
                             <span class="faq-plus font-comic text-2xl text-hero-red leading-none">+</span>
                         </summary>
                         <p class="font-body text-sm text-ink/75 leading-relaxed mt-3">
-                            No. No analytics, no telemetry, no remote server. The injected script runs only when you click, type the shortcut,
-                            or use the context menu. Everything stays in your browser.
+                            No. No analytics, no telemetry, no remote server. The script runs only when you click, use the shortcut,
+                            or use the context menu.
                         </p>
                     </details>
 
@@ -730,8 +722,8 @@
                             <span class="faq-plus font-comic text-2xl text-hero-red leading-none">+</span>
                         </summary>
                         <p class="font-body text-sm text-ink/75 leading-relaxed mt-3">
-                            Chrome blocks extensions from injecting scripts into its own pages, the Web Store, and some local files.
-                            That's a browser security rule — no extension can bypass it.
+                            Chrome blocks extensions on its own pages, the Web Store, and some local files.
+                            No extension can bypass that.
                         </p>
                     </details>
 
@@ -741,8 +733,8 @@
                             <span class="faq-plus font-comic text-2xl text-hero-red leading-none">+</span>
                         </summary>
                         <p class="font-body text-sm text-ink/75 leading-relaxed mt-3">
-                            Not yet. Most of the code is standard, but the manifest and the <code class="bg-ink/5 border border-ink/20 px-1 rounded text-xs">chrome.*</code>
-                            API usage would need a compatibility layer. Contributions are welcome.
+                            Not yet. The manifest and <code class="bg-ink/5 border border-ink/20 px-1 rounded text-xs">chrome.*</code>
+                            API usage need a compatibility layer. Contributions welcome.
                         </p>
                     </details>
                 </div>
@@ -758,8 +750,7 @@
                 <span class="font-comic text-sm tracking-widest text-white">END OF ISSUE</span>
             </div>
             <p class="font-body text-sm sm:text-base text-paper/80 max-w-2xl mx-auto leading-relaxed mb-5">
-                Proudly powered <span class="text-hero-red font-bold">without any trackers</span> in 2026.<br>
-                <span class="text-xs text-paper/50">(Yes, we're old school. The good kind.)</span>
+                No trackers. No analytics. Just PiP.
             </p>
 
             <nav class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-5" aria-label="Footer navigation">
@@ -783,7 +774,7 @@
             </nav>
 
             <p class="font-body text-xs text-paper/40 mt-2">
-                © <span id="year">2026</span> Superpower PiP — MIT licensed. Drawn with ❤️ in pure comic book tradition.
+                © <span id="year">2026</span> Superpower PiP. MIT licensed.
             </p>
         </div>
     </footer>
@@ -826,13 +817,6 @@
             // Keep the copyright year current
             const yearEl = document.getElementById('year');
             if (yearEl) yearEl.textContent = new Date().getFullYear();
-
-            console.log('%c🦸 SUPERPOWER PiP %cLanding Page Ready',
-                'font-size:2em;font-weight:bold;color:#DC2626;font-family:Bangers,Impact,cursive;',
-                'font-size:1em;color:#111;');
-            console.log('%cOpen source, no trackers, pure comic book style. %c→ https://github.com/SnegOwo/SuperPower-PiP',
-                'color:#555;font-style:italic;',
-                'color:#DC2626;font-weight:bold;');
         })();
     </script>
 </body>
